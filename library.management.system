@@ -1,0 +1,69 @@
+# LIBRARY MANAGEMENT SYSTEM
+
+class Library:
+    def __init__(self):
+        self.file = open("books.txt", "a+")
+
+    def __del__(self):
+        self.file.close()
+
+    def list_books(self):
+        self.file.seek(0)
+        books = self.file.read().splitlines()
+        for book in books:
+            title, author, release_date, page_number = book.split(',')
+            print(f"Title: {title}, Author: {author}")
+
+    def add_book(self):
+        title = input("Enter book title: ")
+        author = input("Enter book author: ")
+        release_date = input("Enter release year: ")
+        page_number = input("Enter number of pages: ")
+        book_info = f"{title},{author},{release_date},{page_number}\n"
+
+        self.file.seek(0)
+        if book_info in self.file.readlines():
+            print("Book is already available in the library.")
+        else:
+            self.file.write(book_info)
+            print("Book is added successfully.")
+
+    def remove_book(self):
+        title = input("Enter the title of the book you want to remove: ")
+        confirm = input(f"Are you sure you want to remove '{title}' book? (yes/no): ").lower()
+        if confirm == 'yes': 
+            self.file.seek(0)
+            books = self.file.readlines()
+            new_books = []
+            for book in books:
+                if title not in book:
+                    new_books.append(book)
+            self.file.seek(0)
+            self.file.truncate()
+            self.file.writelines(new_books)
+            print(f"Book '{title}' removed successfully.")
+        else:
+            print("Book removal canceled.")
+# I wanted to ask the user if they are sure about the removal of that book
+
+
+lib = Library()
+
+while True:
+    print("*** MENU ***")
+    print("1) List Books")
+    print("2) Add Book")
+    print("3) Remove Book")
+    choice = input("Enter your choice (1/2/3): ")
+
+    if choice == '1':
+        lib.list_books()
+    elif choice == '2':
+        lib.add_book()
+    elif choice == '3':
+        lib.remove_book()
+    elif choice.lower() == 'q':
+        print('Exiting program. Goodbye!')
+        break
+    else:
+        print("Invalid choice. Please enter a valid option.")
